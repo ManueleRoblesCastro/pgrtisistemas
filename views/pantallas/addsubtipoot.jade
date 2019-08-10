@@ -1,0 +1,166 @@
+extends ../default
+block content
+
+	include ../menu/navmenu
+
+	div(class=['ui','container','grid','stackable'])
+		div(class='row')
+		div(class='row')
+
+		div(class=['floated', 'fifteen', 'wide', 'column'])
+
+			button(class=['fluid', 'ui', 'button', 'active'])='Agregar Sub Tipo de Orden de Trabajo'
+
+			div(class=['ui', 'grey', 'inverted', 'segment', 'form-addsubtipoot'] )
+	
+				form(class=['ui','form'], action='/pantallas/savesubtipoot/'+operacion, method='post')
+					div(class=['ui', 'three', 'fields'])
+						div(class=['ui', 'field'])
+							label(for='IdSubTipo_OT')= 'ID'
+							div(class = ['ui left corner labeled input'])
+								if datoSubTipo_OT!=undefined
+									input(type='text' placeholder='ID' name='IdSubTipo_OT' id='id_IdSubTipo_OT' value=datoSubTipo_OT[0].IdSubTipo_OT readonly)
+								else
+									input(type='text' placeholder='ID' name='IdSubTipo_OT' id='id_IdSubTipo_OT' readonly)
+								div(class=['ui left corner label'])
+									i(class=['asterisk icon'])
+						div(class=['ui','field'])
+							label(for='IdTipo_OT')= 'Tipo de OT'
+							select(class=['ui', 'search' , 'dropdown'] name='IdTipo_OT' id='id_IdTipo_OT')
+								if datoSubTipo_OT!=undefined
+									each datotipoot in datostipoot
+										option(value='#{datotipoot.IdTipo_OT}', selected=(datoSubTipo_OT[0].IdTipo_OT==datotipoot.IdTipo_OT)) #{datotipoot.NombreTipoOT}
+								else
+									each datotipoot in datostipoot
+										option(value='#{datotipoot.IdTipo_OT}') #{datotipoot.NombreTipoOT}
+						div(class=['ui','field'])
+							label(for='Descripcion')= 'Sub Tipo'
+							if datoSubTipo_OT!=undefined
+								input(type='text' name='Descripcion' placeholder='Nombre' id='id_Descripcion' value=datoSubTipo_OT[0].Descripcion maxlength='50')
+							else
+								input(type='text' name='Descripcion' placeholder='Nombre' id='id_Descripcion' maxlength='50')
+					div(class=['ui', 'two', 'fields'])
+						div(class=['ui','field'])
+							label(for='ActivoSubTipo_OT')= 'Estado'
+							if datoSubTipo_OT!=undefined
+								select(class=['ui', 'search' , 'dropdown'] name='ActivoSubTipo_OT' id='id_ActivoSubTipo_OT')
+									if datoSubTipo_OT[0].ActivoSubTipo_OT=='A'
+										option(value='A', selected)='Activo'
+									else
+										option(value='A')='Activo'
+									if datoSubTipo_OT[0].ActivoSubTipo_OT=='I'
+										option(value='I', selected)='Inactivo'
+									else
+										option(value='I')='Inactivo'								
+							else
+								select(class=['ui', 'search' , 'dropdown'] name='ActivoSubTipo_OT' id='id_ActivoSubTipo_OT')
+									option(value='A', selected)='Activo'
+									option(value='I', selected)='Inactivo'
+						div(class=['ui','field'])
+							label(for='Peso')= 'Peso'
+							if datoSubTipo_OT!=undefined
+								input(type='number' name='Peso' min='1' max='10' id='id_Peso' placeholder='Peso' value=datoSubTipo_OT[0].Peso onkeypress='return event.charCode >= 49 && event.charCode <= 57')
+							else
+								input(type='number' name='Peso' min='1' max='10' id='id_Peso' placeholder='Peso' onkeypress='return event.charCode >= 49 && event.charCode <= 57')
+					div(class=['ui', 'two', 'fields'])								
+						div(class=['ui','field'])
+							label(for='CodigoTecnico')= 'Técnico Titular'
+							select(class=['ui', 'search' , 'dropdown'] name='CodigoTecnico' id='id_CodigoTecnico')
+								if datoSubTipo_OT!=undefined
+									each tecnicolist in tecnicoslist
+										option(value='#{tecnicolist.CodigoTecnico}', selected=(datoSubTipo_OT[0].CodigoTecnico==tecnicolist.CodigoTecnico)) #{tecnicolist.NombreTecnico}
+								else
+									each tecnicolist in tecnicoslist
+										option(value='#{tecnicolist.CodigoTecnico}') #{tecnicolist.NombreTecnico}
+										
+						div(class=['ui','field'])
+							label(for='CodigoTecnico1')= 'Técnico Suplente'
+							select(class=['ui', 'search' , 'dropdown'] name='CodigoTecnico1' id='id_CodigoTecnico1')
+								if datoSubTipo_OT!=undefined
+									each tecnicolist in tecnicoslist
+										option(value='#{tecnicolist.CodigoTecnico}', selected=(datoSubTipo_OT[0].CodigoTecnico1==tecnicolist.CodigoTecnico)) #{tecnicolist.NombreTecnico}
+								else
+									each tecnicolist in tecnicoslist
+										option(value='#{tecnicolist.CodigoTecnico}') #{tecnicolist.NombreTecnico}
+
+					div(class='actions' id='actions-AddSubTipo_OT')
+						button(class=['ui', 'right', 'labeled', 'icon', 'button', 'teal'] id='guardar-SubTipo_OT')='Guardar'
+							i(class=['edit', 'icon'])
+						a(class=['ui right labeled button teal icon'] onclick="regresar()")='Regresar'
+							i(class=['step', 'backward', 'text', 'icon'])
+
+					div(class=['ui','message','error'])
+
+	script(type='text/javascript').
+
+		function regresar() {
+			window.location.href ='/pantallas/OTsubtipo';
+		}
+
+		var formAddOTsubtipoValidationRules =
+		{
+			IdTipo_OT: {
+				identifier  : 'IdTipo_OT',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar tipo de orden de trabajo'
+					}
+				]
+			},
+			Descripcion: {
+				identifier  : 'Descripcion',
+				rules: [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar nombre del de sub tipo de orden de trabajo'
+					}
+				]
+			},					
+			ActivoSubTipo_OT: {
+				identifier  : 'ActivoSubTipo_OT',
+				rules: [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar un estado del sub tipo de orden de trabajo'
+					}
+				]
+			},
+			Peso: {
+				identifier  : 'Peso',
+				rules: [
+					{
+						type   : 'integer[1..10]',
+						prompt : 'Ingrese un valor valido entre 1 a 10'
+					}
+				]
+			},
+			CodigoTecnico: {
+				identifier  : 'CodigoTecnico',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar un técnico titular'
+					}
+				]
+			},
+			CodigoTecnico1: {
+				identifier  : 'CodigoTecnico1',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar un técnico suplente'
+					}
+				]
+			}			
+		}
+
+		var formSettings =
+		{
+			onFailure : function() 
+			{
+				return false;
+			}
+		}
+
+		$('.form-addsubtipoot form').form(formAddOTsubtipoValidationRules, formSettings);

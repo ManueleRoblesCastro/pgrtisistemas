@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "manuelrobles",
+    "password": "AzPgr!2018",
+    "server": "pgrutistserver.database.windows.net",
+    "database": "pgr_soporte",
+    "dialect": "mssql"
+  }
+}

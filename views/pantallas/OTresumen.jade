@@ -1,0 +1,138 @@
+div(class=['ui','modal'] id='modalOTresumen')
+	i(class=['close', 'icon'])
+	div(class=['floated', 'thirteen', 'wide', 'column', 'form-OTresumen'])
+		button(class=['fluid', 'ui', 'button', 'disabled'])='Resumen de Ordenes de Trabajo por Técnico'
+		br
+		
+		table(class=['ui small table'] id='tbl-listadeotsresumen')
+			thead
+				tr
+					th
+					th(colspan='2')='Total'
+					th(colspan='2')='En Curso'
+					th(colspan='2')='En Taller'
+					th(colspan='2')='Reasignar'
+					th(colspan='2')='Finalizada'
+					th(colspan='2')='Descargar'					
+				tr			
+					th='Técnico'
+					th='Peso'						
+					th='Cant.'
+					th='Peso'						
+					th='Cant.'
+					th='Peso'						
+					th='Cant.'
+					th='Peso'						
+					th='Cant.'
+					th='Peso'						
+					th='Cant.'
+					th='Peso'						
+					th='Cant.'					
+
+			tbody(id='listaotsresumenBody')
+	
+		div(class=['five center wide column'])
+			button(class=['ui black button'] id='resumen-cerrar')='Cerrar'
+			
+script(type='text/javascript').
+
+	$('#resumen-cerrar').click(function (e){
+		$('.ui.modal').modal('hide');
+	});
+
+	$('#tbl-listadeotsresumen').DataTable({
+		"dom": '<"top"fil>rt<"clear"><"bottom"pB>',
+
+		columns: [
+			{ data: 'Tecnico' },
+			{ data: 'SumaPesoOT_10' }, 
+			{ data: 'ConteoOT_10' },
+			{ data: 'SumaPesoOT_1' }, 
+			{ data: 'ConteoOT_1' },
+			{ data: 'SumaPesoOT_3' }, 
+			{ data: 'ConteoOT_3' },
+			{ data: 'SumaPesoOT_4' }, 
+			{ data: 'ConteoOT_4' },
+			{ data: 'SumaPesoOT_5' }, 
+			{ data: 'ConteoOT_5' },
+			{ data: 'SumaPesoOT_6' }, 
+			{ data: 'ConteoOT_6' }			
+		],
+		
+		"columnDefs": [ 
+			{
+				"targets": [ 11, 12 ],
+				"createdCell": function (td, cellData, rowData, row, col) {
+					if ( cellData >= 0 ) {
+						$(td).css('background-color', '#ff9999')
+					}
+				}
+			},
+			{
+				"targets": [ 9, 10 ],
+				"createdCell": function (td, cellData, rowData, row, col) {
+					if ( cellData >= 0 ) {
+						$(td).css('background-color', '#adebad')
+					}
+				}
+			},
+			{
+				"targets": [ 7, 8 ],
+				"createdCell": function (td, cellData, rowData, row, col) {
+					if ( cellData >= 0 ) {
+						$(td).css('background-color', '#99d6ff')
+					}
+				}
+			},
+			{
+				"targets": [ 5, 6 ],
+				"createdCell": function (td, cellData, rowData, row, col) {
+					if ( cellData >= 0 ) {
+						$(td).css('background-color', '#cccccc')
+					}
+				}
+			},
+			{
+				"targets": [ 3, 4 ],
+				"createdCell": function (td, cellData, rowData, row, col) {
+					if ( cellData >= 0 ) {
+						$(td).css('background-color', '#ffff99')
+					}
+				}
+			}												
+		 ],	
+			
+		"autoWidth": true,
+		colReorder: true,
+		responsive: true,			
+		paging: false,
+		select: {
+			style: 'single'
+		},
+		'pageLength': 10,
+		 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "todo"]],
+		'order': [[ 0, 'desc' ]],
+		'language': {
+			url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json',
+			select: {
+				rows: "%d fila(s) seleccionada(s)"
+			}
+		},
+					
+		buttons: [
+			{
+				title:  'RESUMEN DE OTS, PGT TI',
+				extend: 'excelHtml5',
+				filename: 'ResumenOts_',
+				text: 'Excel',
+				customize: function(xlsx) {
+				var sheet = xlsx.xl.worksheets['sheet1.xml'];
+				$('row c[r^="F"]', sheet).each( function () {
+				if ( $('is t', this).text().replace(/[^\d]/g, '') * 1 >= 500000 ) {
+						$(this).attr( 's', '20' );
+						}
+					});
+				}
+			}
+		]
+	});

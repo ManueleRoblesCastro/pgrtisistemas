@@ -1,0 +1,247 @@
+extends ../default
+block content
+
+	include ../menu/navmenu
+
+	div(class=['ui', 'grid', 'container'])
+		div(class='row')
+		div(class='row')
+				
+		div(class=['ui', 'grid', 'container','stackable'])
+		
+			button(class=['fluid', 'ui', 'button', 'active'])='Consulta de Ordenes de Trabajo'
+	
+			div(class='row' style='background-color: #ff751a;color: #ff751a;'  id='idmenufiltros')
+			
+				div(class = ['ui', 'input', 'fitted', 'left'])
+					div(class=['ui fitted toggle checkbox'] id='idfiltro-N1')
+						input(type='checkbox' name='filtro-N1')
+						label=''
+					input(type='text' name='IdOT' id='id_IdOT' placeholder='No. Orden de Trabajo' onkeypress=' return (event.keyCode==13 || (event.charCode >= 48 && event.charCode <= 57))' maxlength='6')					
+								
+				div(class = ['ui', 'input', 'fitted', 'left'] id='idunidades'  data-tooltip='Unidades' data-position='bottom center' data-inverted='')
+					div(class=['ui fitted toggle checkbox'] id='idfiltro-N3')
+						input(type='checkbox' name='filtro-N3')
+						label=''
+					select(class=['ui', 'search' , 'dropdown', 'idUnidadc'] name='IdUnidad' id='id_IdUnidad')
+						if unidadeslist!=undefined
+							each unidadlist in unidadeslist
+								option(value='#{unidadlist.IdUnidad}') #{unidadlist.NombreUnidad}
+								
+			table(class=['ui','table','celled'] id='tbl-detalleots')
+				thead
+					tr
+						th
+						th='Id'
+						th='Fecha'
+						th='IdEstado'
+						th='Estado'
+						th='IdMarca'
+						th='Nombre de Empleado'
+						th='IdUnidad'
+						th='Nombre de Unidad y Lugar'
+						th='CodigoActivoFijo'
+						th='Nombre de Activo Fijo'
+						th='Resumen'
+						th='CodigoTecnico'
+						th='Nombre de Tecnico'
+						th='Fecha de Resolucion'
+				tbody(id='myTableBody')
+					each datoconsultaot in datosconsultaot
+						tr
+							td
+							td(class="right aligned")= datoconsultaot.IdOT
+							td= datoconsultaot.FechaOT
+							td= datoconsultaot.IdEstado
+							td= datoconsultaot.NombreEstado
+							td= datoconsultaot.IdMarca
+							td= datoconsultaot.NombreEmpleado
+							td= datoconsultaot.IdUnidad
+							td= datoconsultaot.NombreUnidad
+							td= datoconsultaot.CodigoActivoFijo
+							td= datoconsultaot.NombreActivoFijo
+							td= datoconsultaot.Resumen
+							td= datoconsultaot.CodigoTecnico
+							td= datoconsultaot.NombreTecnico
+							td= datoconsultaot.FechaResolucion					
+
+	script(type='text/javascript').
+
+		function formatrazaot ( d ) {
+			var contraza=0, tablatrazaot='';
+
+			if (d.length>0) {
+				tablatrazaot = tablatrazaot+'<tr><td><b>Estado</b></td><td><b>Fecha</b></td><td>Tecnico</td><td>Solución</td></tr>';
+				for (contraza=0; contraza < d.length; contraza++){
+					tablatrazaot = tablatrazaot+'<tr><td>'+d[contraza].NombreEstadoNuevo+'</td>';
+					tablatrazaot = tablatrazaot+'<td>'+d[contraza].Fecha+'</td>';
+					tablatrazaot = tablatrazaot+'<td>'+d[contraza].TecnicoAsignado+'</td>';
+					tablatrazaot = tablatrazaot+'<td>'+d[contraza].Comentario+'</td></tr>';
+				}
+			}
+
+			return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'
+			+tablatrazaot+
+			'</table>';
+		}
+
+		$('#id_IdMarca').dropdown({ fullTextSearch: true });
+		$('#id_IdUnidad').dropdown({ fullTextSearch: true });
+		$('#id_CodigoActivoFijo').dropdown({ fullTextSearch: true });
+				
+		$('#tbl-detalleots').DataTable({
+			"dom": '<"top"if>rt<"bottom"lp><"clear">',
+			
+			columns: [
+				{
+					className: 'details-control',
+					orderable: false,
+					data: 'null',
+					defaultContent: ''
+				},			
+				{ data: 'IdOT' },
+				{ data: 'FechaOT' },
+				{ data: 'IdEstado' },
+				{ data: 'NombreEstado' },
+				{ data: 'IdMarca' },
+				{ data: 'NombreEmpleado' },
+				{ data: 'IdUnidad' },
+				{ data: 'NombreUnidad' },
+				{ data: 'CodigoActivoFijo' },
+				{ data: 'NombreActivoFijo' },
+				{ data: 'Resumen' },
+				{ data: 'CodigoTecnico' },
+				{ data: 'NombreTecnico' },
+				{ data: 'FechaResolucion' }
+			],
+
+			"autoWidth": false,			
+			"columnDefs": [
+				{ width: '5%', targets: 0 },
+				{ width: '8%', targets: 1 },
+				{ width: '12%', targets: 2 },
+				{ width: '12%', targets: 4 },
+				{ width: '12%', targets: 5 },
+				{ width: '12%', targets: 8 },
+				{ width: '20%', targets: 10 },
+				{ width: '16%', targets: 11 },
+				{ width: '12%', targets: 13 },
+				{ width: '12%', targets: 14 }
+			],			
+			colReorder: true,
+			responsive: true,			
+			paging: true,
+			select: {
+				style: 'single'
+			},
+			'pageLength': 5,
+			 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "todo"]],
+			'order': [[ 1, 'desc' ]],
+			stateSave: true,
+			'language': {
+				   url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json',
+				select: {
+					rows: "%d fila(s) seleccionada(s)"
+				}
+			},
+			
+			"aoColumnDefs": [
+				{ "sClass": "my_class_col", "aTargets": [ 4 ] }
+			],			
+
+			"rowCallback": function( row, data, index ) {			
+				if(data.IdEstado==1){
+					$(row).removeClass('amarillocrs');
+					$(row).addClass('amarillocrs');
+				}
+				if(data.IdEstado==3){
+					$(row).removeClass('griscrs');
+					$(row).addClass('griscrs');
+				}
+				if(data.IdEstado==4){
+					$(row).removeClass('celestecrs');
+					$(row).addClass('celestecrs');
+				}
+				if(data.IdEstado=='5'){
+					$(row).removeClass('verdecrs');
+					$(row).addClass('verdecrs');
+				}					
+				if(data.IdEstado=='6'){
+					$(row).removeClass('rojocrs');
+					$(row).addClass('rojocrs');
+				}
+			}
+		});
+		
+		$('#idfiltro-N1').checkbox({ //IdOT
+			onChecked: function() {
+				$('#tbl-detalleots').DataTable()
+					.columns(1)
+					.search( $('#id_IdOT').val() )
+					.draw();
+
+				$('#id_IdOT').prop( 'disabled', true );
+			},
+			onUnchecked: function() {
+				$('#tbl-detalleots').DataTable()
+					.columns(1)
+					.search( '' )
+					.draw();
+
+				$('#id_IdOT').prop( 'disabled', false );
+			}			
+		});
+		
+		$('#idfiltro-N3').checkbox({ //IdUnidad
+			onChecked: function() {
+			
+				var valor = $('#id_IdUnidad').val();
+			
+				$('#tbl-detalleots').DataTable()
+				.columns(7)
+				.search( valor ? '^'+$('#id_IdUnidad').val()+'$' : valor, true, false ) 
+				.draw();
+		
+				$('.ui.dropdown.idUnidadc').addClass('disabled');
+
+			},
+			onUnchecked: function() {
+
+				$('#tbl-detalleots').DataTable()
+					.columns(7)
+					.search( '' )
+					.draw();
+
+				$('.ui.dropdown.idUnidadc').removeClass('disabled');
+			}			
+		});		
+		
+		$(document).ready(function() {
+		
+			var tableroconsultaot = $('#tbl-detalleots').DataTable();
+			tableroconsultaot.columns( [ 3 ] ).visible( false );
+			tableroconsultaot.columns( [ 5 ] ).visible( false );
+			tableroconsultaot.columns( [ 7 ] ).visible( false );
+			tableroconsultaot.columns( [ 9 ] ).visible( false );
+			tableroconsultaot.columns( [ 12 ] ).visible( false );
+			
+			$('#tbl-detalleots tbody').on('click', 'td.details-control', function () {
+				var tr = $(this).closest('tr');
+				var row = tableroconsultaot.row( tr );
+
+				if ( row.child.isShown() ) {
+					row.child.hide();
+					tr.removeClass('shown');
+				}
+				else {
+					$.get( '/pantallas/OTtraza/'+row.data().IdOT, function( objJsonDatosRec ) {
+						if (objJsonDatosRec.datostrazaot.length>0){
+							row.child( formatrazaot(objJsonDatosRec.datostrazaot) ).show();
+						}
+					});
+					tr.addClass('shown');
+				}
+			});			
+			
+		});				
+		

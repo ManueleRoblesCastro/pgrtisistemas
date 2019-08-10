@@ -1,0 +1,196 @@
+extends ../default
+block content
+
+	include ../menu/navmenu
+
+	div(class=['ui', 'grid', 'container'])
+		div(class='row')
+		div(class='row')
+		div(class=['ui', 'grid', 'container','stackable'])
+
+			div(class=['floated', 'sixteen', 'wide', 'column', 'segment'])
+
+				button(class=['fluid', 'ui', 'button', 'active'])='Mantenimiento de Sub Tipos de Ordenes de Trabajo'
+
+				a(class=['ui button icon teal'] data-tooltip='Nuevo' data-position='top center' data-inverted='' id='nuevosubtipoOT' href='/pantallas/addsubtipoot/1/0')
+					i(class=['add icon'])
+				div(class=['ui', 'slider', 'checkbox'])
+					input(type='checkbox' name='filtro-N' id='idfiltro-N')
+					label='Ver todos los sub tipos de Ordenes de Trabajo'
+
+				table(class=['ui','table','celled'] id='tbl-subtiposot')
+					thead
+						tr
+							th='Id'
+							th='Tipo'
+							th='Sub Tipo'
+							th='Estado'
+							th='Peso'
+							th='Titular'
+							th='Suplente'
+							th='Opciones'
+					tbody(id='myTableBody')
+						each datosubtipoot in datossubtipoot
+							tr
+								td
+									a(class=['ui button black basic'] href='/pantallas/addsubtipoot/2/'+ datosubtipoot.IdSubTipo_OT data-tooltip='Ver Detalle' data-position='top right' data-inverted='')=datosubtipoot.IdSubTipo_OT
+								td= datosubtipoot.NombreTipoOT
+								td= datosubtipoot.Descripcion
+								td= datosubtipoot.ActivoSubTipo_OT
+								td= datosubtipoot.Peso
+								td= datosubtipoot.CodigoTecnico
+								td= datosubtipoot.CodigoTecnico1
+								td
+									a(class=['ui button teal icon'] onclick="inactivar_subtipoot("+datosubtipoot.IdSubTipo_OT+")" data-tooltip='Inactivar' data-position='top right' data-inverted='')
+										i(class=['window close icon'])
+									a(class=['ui button teal icon'] onclick="borrar_subtipoot("+datosubtipoot.IdSubTipo_OT+")" data-tooltip='Borrar' data-position='top right' data-inverted='')
+										i(class=['trash icon'])
+
+	script(type='text/javascript').
+
+		function inactivar_subtipoot(IdSubTipo_OT) {
+
+			swal({
+				title: "Esta seguro de inactivar el sub tipo OT " + IdSubTipo_OT +  "?",
+				text: "El sub tipo OT no sera observable por el filtro activo.",
+				type: "warning",
+				showCancelButton: true,
+				cancelButtonText: "No, Cancelar",
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Si, Inactivar!",
+				closeOnConfirm: false,
+				closeOnCancel: true
+			},
+
+			function() {
+
+				$.ajax({
+					url : '/pantallas/disablesubtipoot/'+IdSubTipo_OT,
+					method : 'post',
+					success : function(dataobtenida){
+						if(dataobtenida.respuesta.res){
+							swal("Hecho!", "el sub tipo de orden de trabajo ha sido actualizado con exito.", "success");
+							window.location.href ='/pantallas/OTsubtipo';											
+						}else{
+							swal("Error!", "el sub tipo de orden de trabajo no se puede guardar. Detalle: " +  dataobtenida.menerror.parent.message, "error");
+							return;
+						}
+					}
+				});
+
+			});
+
+		}
+
+		function borrar_subtipoot(IdSubTipo_OT) {
+
+			swal({
+				title: "Esta seguro de borrar el sub tipo ot " + IdSubTipo_OT +  "?",
+				text: "Tambien seran borrados registros asociados al sub tipo ot.",
+				type: "warning",
+				showCancelButton: true,
+				cancelButtonText: "No, Cancelar",
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Si, Borrar!",
+				closeOnConfirm: false,
+				closeOnCancel: true
+			},
+
+			function() {
+
+				$.ajax({
+					url : '/pantallas/delsubtipoot/'+IdSubTipo_OT,
+					method : 'post',
+					success : function(dataobtenida){
+						if(dataobtenida.respuesta.res){
+							swal("Hecho!", "La el tipo de orden de trabajo ha sido actualizado con exito.", "success");
+							window.location.href ='/pantallas/OTsubtipo';											
+						}else{
+							swal("Error!", "La el tipo de orden de trabajo no se puede guardar. Detalle: " +  dataobtenida.menerror.parent.message, "error");
+							return;
+						}
+					}
+				});
+
+			});
+
+		}
+
+		$('.ui.checkbox').checkbox({
+			beforeChecked: function() {
+				$('#tbl-subtiposot').DataTable()
+					.columns(3)
+					.search( '' )
+					.draw();
+			},
+			beforeUnchecked: function() {
+				$('#tbl-subtiposot').DataTable()
+					.columns(3)
+					.search( 'A' )
+					.draw();
+			}			
+		});
+
+		$('#tbl-subtiposot').DataTable({
+			"dom": '<"top"if>rt<"bottom"lpB><"clear">',
+
+			columnDefs: [
+				{ width: '12%', targets: 0 },
+				{ width: '12%', targets: 1 },
+				{ width: '12%', targets: 2 },
+				{ width: '12%', targets: 3 },
+				{ width: '12%', targets: 4 },
+				{ width: '12%', targets: 5 }
+			],
+
+			colReorder: true,
+			responsive: true,			
+			paging: true,
+			select: {
+				style: 'single'
+			},
+			'pageLength': 5,
+			 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "todo"]],
+			'order': [[ 0, 'desc' ]],
+			stateSave: true,
+			'language': {
+				   url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json',
+				select: {
+					rows: "%d fila(s) seleccionada(s)"
+				}
+			},
+			"autoWidth": false,
+			buttons: [
+				{
+					title:  'Sub Tipos de Ordenes de Trabajo ',
+					extend: 'excelHtml5',
+					filename: 'SubTipo_OT',
+					text: 'Excel',
+					customize: function(xlsx) {
+					var sheet = xlsx.xl.worksheets['sheet1.xml'];
+					// Loop over the cells in column `F`
+					$('row c[r^="F"]', sheet).each( function () {
+					// Get the value and strip the non numeric characters
+					if ( $('is t', this).text().replace(/[^\d]/g, '') * 1 >= 500000 ) {
+							$(this).attr( 's', '20' );
+							}
+						});
+					}
+				}
+			],			
+			"rowCallback": function( row, data, index ) {
+				if(index%2 == 0){
+					$(row).removeClass('myodd myeven');
+					$(row).addClass('myodd');
+					}
+				else{
+					$(row).removeClass('myodd myeven');
+					$(row).addClass('myeven');
+				}
+			}
+		});
+
+		$('#tbl-subtiposot').DataTable()
+			.columns(3)
+			.search( 'A' )
+			.draw();

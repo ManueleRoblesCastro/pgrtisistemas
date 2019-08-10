@@ -1,0 +1,188 @@
+extends ../default
+block content
+
+	include ../menu/navmenu
+
+	div(class=['ui', 'grid', 'container'])
+		div(class='row')
+		div(class='row')
+		div(class=['ui', 'grid', 'container','stackable'])
+
+			div(class=['floated', 'sixteen', 'wide', 'column', 'segment'])
+
+				button(class=['fluid', 'ui', 'button', 'active'])='Mantenimiento de Tipos de Ordenes de Trabajo'
+
+				a(class=['ui button icon teal'] data-tooltip='Nuevo' data-position='top center' data-inverted='' id='nuevotipoOT' href='/pantallas/addtipoot/1/0')
+					i(class=['add icon'])
+				div(class=['ui', 'slider', 'checkbox'])
+					input(type='checkbox' name='filtro-N' id='idfiltro-N')
+					label='Ver todos los tipos de Ordenes de Trabajo'
+
+				table(class=['ui','table','celled'] id='tbl-tiposot')
+					thead
+						tr
+							th='Id'
+							th='Nombre'
+							th='Estado'
+							th='Opciones'
+					tbody(id='myTableBody')
+						each datotipoot in datostipoot
+							tr
+								td
+									a(class=['ui button black basic'] href='/pantallas/addtipoot/2/'+ datotipoot.IdTipo_OT data-tooltip='Ver Detalle' data-position='top right' data-inverted='')=datotipoot.IdTipo_OT
+								td= datotipoot.NombreTipoOT
+								td= datotipoot.ActivoTipo_OT
+								td
+									a(class=['ui button teal icon'] onclick="inactivar_tipoot("+datotipoot.IdTipo_OT+")" data-tooltip='Inactivar' data-position='top right' data-inverted='')
+										i(class=['window close icon'])
+									a(class=['ui button teal icon'] onclick="borrar_tipoot("+datotipoot.IdTipo_OT+")" data-tooltip='Borrar' data-position='top right' data-inverted='')
+										i(class=['trash icon'])
+
+	script(type='text/javascript').
+
+		function inactivar_tipoot(IdTipo_OT_P) {
+
+			swal({
+				title: "Esta seguro de inactivar el tipo OT " + IdTipo_OT_P +  "?",
+				text: "El tipo OT no sera observable por el filtro activo.",
+				type: "warning",
+				showCancelButton: true,
+				cancelButtonText: "No, Cancelar",
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Si, Inactivar!",
+				closeOnConfirm: false,
+				closeOnCancel: true
+			},
+
+			function() {
+
+				$.ajax({
+					url : '/pantallas/disabletipoot/'+IdTipo_OT_P,
+					method : 'post',
+					success : function(dataobtenida){
+						if(dataobtenida.respuesta.res){
+							swal("Hecho!", "el tipo de orden de trabajo ha sido actualizado con exito.", "success");
+							window.location.href ='/pantallas/OTtipo';											
+						}else{
+							swal("Error!", "el tipo de orden de trabajo no se puede guardar. Detalle: " +  dataobtenida.menerror.parent.message, "error");
+							return;
+						}
+					}
+				});
+
+			});
+
+		}
+
+		function borrar_tipoot(IdTipo_OT_P) {
+
+			swal({
+				title: "Esta seguro de borrar el tipo ot " + IdTipo_OT_P +  "?",
+				text: "Tambien seran borrados registros asociados al tipo ot.",
+				type: "warning",
+				showCancelButton: true,
+				cancelButtonText: "No, Cancelar",
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Si, Borrar!",
+				closeOnConfirm: false,
+				closeOnCancel: true
+			},
+
+			function() {
+
+				$.ajax({
+					url : '/pantallas/deltipoot/'+IdTipo_OT_P,
+					method : 'post',
+					success : function(dataobtenida){
+						if(dataobtenida.respuesta.res){
+							swal("Hecho!", "La el tipo de orden de trabajo ha sido actualizado con exito.", "success");
+							window.location.href ='/pantallas/OTtipo';											
+						}else{
+							swal("Error!", "La el tipo de orden de trabajo no se puede guardar. Detalle: " +  dataobtenida.menerror.parent.message, "error");
+							return;
+						}
+					}
+				});
+
+			});
+
+		}
+
+		$('.ui.checkbox').checkbox({
+			beforeChecked: function() {
+				$('#tbl-tiposot').DataTable()
+					.columns(2)
+					.search( '' )
+					.draw();
+			},
+			beforeUnchecked: function() {
+				$('#tbl-tiposot').DataTable()
+					.columns(2)
+					.search( 'A' )
+					.draw();
+			}			
+		});
+
+		$('#tbl-tiposot').DataTable({
+			"dom": '<"top"if>rt<"bottom"lpB><"clear">',
+
+			columnDefs: [
+				{ width: '12%', targets: 0 },
+				{ width: '12%', targets: 1 },
+				{ width: '12%', targets: 2 },
+				{ width: '12%', targets: 3 }
+			],
+
+			colReorder: true,
+			responsive: true,			
+			paging: true,
+			select: {
+				style: 'single'
+			},
+			'pageLength': 5,
+			 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "todo"]],
+			'order': [[ 0, 'desc' ]],
+			stateSave: true,
+			'language': {
+				   url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json',
+				select: {
+					rows: "%d fila(s) seleccionada(s)"
+				}
+			},
+			"autoWidth": false,
+			buttons: [
+				{
+					title:  'Tipos de Ordenes de Trabajo ',
+					extend: 'excelHtml5',
+					filename: 'Tipo_OT',
+					text: 'Excel',
+					customize: function(xlsx) {
+					var sheet = xlsx.xl.worksheets['sheet1.xml'];
+					// Loop over the cells in column `F`
+					$('row c[r^="F"]', sheet).each( function () {
+					// Get the value and strip the non numeric characters
+					if ( $('is t', this).text().replace(/[^\d]/g, '') * 1 >= 500000 ) {
+							$(this).attr( 's', '20' );
+							}
+						});
+					}
+				}
+			],			
+			"rowCallback": function( row, data, index ) {
+				if(index%2 == 0){
+					$(row).removeClass('myodd myeven');
+					$(row).addClass('myodd');
+					}
+				else{
+					$(row).removeClass('myodd myeven');
+					$(row).addClass('myeven');
+				}
+			}
+		});
+
+		$('#tbl-tiposot').DataTable()
+			.columns(2)
+			.search( 'A' )
+			.draw();
+
+

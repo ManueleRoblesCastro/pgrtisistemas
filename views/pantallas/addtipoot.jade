@@ -1,0 +1,94 @@
+extends ../default
+block content
+
+	include ../menu/navmenu
+
+	div(class=['ui','container','grid','stackable'])
+		div(class='row')
+		div(class='row')
+
+		div(class=['floated', 'fifteen', 'wide', 'column'])
+
+			button(class=['fluid', 'ui', 'button', 'active'])='Agregar Tipo de Orden de Trabajo'
+
+			div(class=['ui', 'grey', 'inverted', 'segment', 'form-addtipoot'] )
+	
+				form(class=['ui','form'], action='/pantallas/savetipoot/'+operacion, method='post')
+					div(class=['ui', 'three', 'fields'])
+						div(class=['ui', 'field'])
+							label(for='IdTipo_OT')= 'ID'
+							div(class = ['ui left corner labeled input'])
+								if datoTipo_OT!=undefined
+									input(type='text' placeholder='ID' name='IdTipo_OT' id='id_IdTipo_OT' value=datoTipo_OT[0].IdTipo_OT readonly)
+								else
+									input(type='text' placeholder='ID' name='IdTipo_OT' id='id_IdTipo_OT' readonly)
+								div(class=['ui left corner label'])
+									i(class=['asterisk icon'])
+						div(class=['ui','field'])
+							label(for='NombreTipoOT')= 'Tipo'
+							if datoTipo_OT!=undefined
+								input(type='text' name='NombreTipoOT' placeholder='Nombre' id='id_NombreTipoOT' value=datoTipo_OT[0].NombreTipoOT maxlength='50')
+							else
+								input(type='text' name='NombreTipoOT' placeholder='Nombre' id='id_NombreTipoOT' maxlength='50')
+						div(class=['ui','field'])
+							label(for='ActivoTipo_OT')= 'Estado'
+							if datoTipo_OT!=undefined
+								select(class=['ui', 'search' , 'dropdown'] name='ActivoTipo_OT' id='id_ActivoTipo_OT')
+									if datoTipo_OT[0].ActivoTipo_OT=='A'
+										option(value='A', selected)='Activo'
+									else
+										option(value='A')='Activo'
+									if datoTipo_OT[0].ActivoTipo_OT=='I'
+										option(value='I', selected)='Inactivo'
+									else
+										option(value='I')='Inactivo'								
+							else						
+								select(class=['ui', 'search' , 'dropdown'] name='ActivoTipo_OT' id='id_ActivoTipo_OT')
+									option(value='A', selected)='Activo'
+									option(value='I', selected)='Inactivo'	
+
+					div(class='actions' id='actions-AddTipo_OT')
+						button(class=['ui', 'right', 'labeled', 'icon', 'button', 'teal'] id='guardar-Tipo_OT')='Guardar'
+							i(class=['edit', 'icon'])
+						a(class=['ui right labeled button teal icon'] onclick="regresar()")='Regresar'
+							i(class=['step', 'backward', 'text', 'icon'])
+
+					div(class=['ui','message','error'])
+
+	script(type='text/javascript').
+
+		function regresar() {
+			window.location.href ='/pantallas/OTtipo';
+		}
+
+		var formAddOTtipoValidationRules =
+		{
+			NombreTipoOT: {
+				identifier  : 'NombreTipoOT',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar nombre del tipo de orden de trabajo'
+					}
+				]
+			},		
+			ActivoTipo_OT: {
+				identifier  : 'ActivoTipo_OT',
+				rules: [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar un estado del tipo de orden de trabajo'
+					}
+				]
+			}
+		}
+
+		var formSettings =
+		{
+			onFailure : function() 
+			{
+				return false;
+			}
+		}
+
+		$('.form-addtipoot form').form(formAddOTtipoValidationRules, formSettings);

@@ -1,0 +1,166 @@
+extends ../default
+block content
+
+	include ../menu/navmenu
+
+	div(class=['ui','container','grid','stackable'])
+		div(class='row')
+		div(class='row')
+
+		div(class=['floated', 'fifteen', 'wide', 'column'])
+
+			button(class=['fluid', 'ui', 'button', 'active'])='Agregar Categoría de Orden de Trabajo'
+
+			div(class=['ui', 'grey', 'inverted', 'segment', 'form-addcategoriaot'] )
+	
+				form(class=['ui','form'], action='/pantallas/savecategoriaot/'+operacion, method='post')
+					div(class=['ui', 'three', 'fields'])
+						div(class=['ui', 'field'])
+							label(for='IdCategoria_OT')= 'ID'
+							div(class = ['ui left corner labeled input'])
+								if datoCategoria_OT!=undefined
+									input(type='text' placeholder='ID' name='IdCategoria_OT' id='id_IdCategoria_OT' value=datoCategoria_OT[0].IdCategoria_OT readonly)
+								else
+									input(type='text' placeholder='ID' name='IdCategoria_OT' id='id_IdCategoria_OT' readonly)
+								div(class=['ui left corner label'])
+									i(class=['asterisk icon'])
+						div(class=['ui','field'])
+							label(for='IdSubTipo_OT')= 'Categoria de OT'
+							select(class=['ui', 'search' , 'dropdown'] name='IdSubTipo_OT' id='id_IdSubTipo_OT')
+								if datoCategoria_OT!=undefined
+									each datosubtipoot in datossubtipoot
+										option(value='#{datosubtipoot.IdSubTipo_OT}', selected=(datoCategoria_OT[0].IdSubTipo_OT==datosubtipoot.IdSubTipo_OT)) #{datosubtipoot.Descripcion}
+								else
+									each datosubtipoot in datossubtipoot
+										option(value='#{datosubtipoot.IdSubTipo_OT}') #{datosubtipoot.Descripcion}
+						div(class=['ui','field'])
+							label(for='Descripcion')= 'Categoria'
+							if datoCategoria_OT!=undefined
+								input(type='text' name='Descripcion' placeholder='Nombre' id='id_Descripcion' value=datoCategoria_OT[0].Descripcion maxlength='50')
+							else
+								input(type='text' name='Descripcion' placeholder='Nombre' id='id_Descripcion' maxlength='50')
+					div(class=['ui', 'two', 'fields'])
+						div(class=['ui','field'])
+							label(for='ActivoCategoria_OT')= 'Estado'
+							if datoCategoria_OT!=undefined
+								select(class=['ui', 'search' , 'dropdown'] name='ActivoCategoria_OT' id='id_ActivoCategoria_OT')
+									if datoCategoria_OT[0].ActivoCategoria_OT=='A'
+										option(value='A', selected)='Activo'
+									else
+										option(value='A')='Activo'
+									if datoCategoria_OT[0].ActivoCategoria_OT=='I'
+										option(value='I', selected)='Inactivo'
+									else
+										option(value='I')='Inactivo'								
+							else
+								select(class=['ui', 'search' , 'dropdown'] name='ActivoCategoria_OT' id='id_ActivoCategoria_OT')
+									option(value='A', selected)='Activo'
+									option(value='I', selected)='Inactivo'
+						div(class=['ui','field'])
+							label(for='Peso')= 'Peso'
+							if datoCategoria_OT!=undefined
+								input(type='number' name='Peso' min='1' max='10' id='id_Peso' placeholder='Peso' value=datoCategoria_OT[0].Peso onkeypress='return event.charCode >= 49 && event.charCode <= 57')
+							else
+								input(type='number' name='Peso' min='1' max='10' id='id_Peso' placeholder='Peso' onkeypress='return event.charCode >= 49 && event.charCode <= 57')
+					div(class=['ui', 'two', 'fields'])								
+						div(class=['ui','field'])
+							label(for='CodigoTecnico')= 'Técnico Titular'
+							select(class=['ui', 'search' , 'dropdown'] name='CodigoTecnico' id='id_CodigoTecnico')
+								if datoCategoria_OT!=undefined
+									each tecnicolist in tecnicoslist
+										option(value='#{tecnicolist.CodigoTecnico}', selected=(datoCategoria_OT[0].CodigoTecnico==tecnicolist.CodigoTecnico)) #{tecnicolist.NombreTecnico}
+								else
+									each tecnicolist in tecnicoslist
+										option(value='#{tecnicolist.CodigoTecnico}') #{tecnicolist.NombreTecnico}
+										
+						div(class=['ui','field'])
+							label(for='CodigoTecnico1')= 'Técnico Suplente'
+							select(class=['ui', 'search' , 'dropdown'] name='CodigoTecnico1' id='id_CodigoTecnico1')
+								if datoCategoria_OT!=undefined
+									each tecnicolist in tecnicoslist
+										option(value='#{tecnicolist.CodigoTecnico}', selected=(datoCategoria_OT[0].CodigoTecnico1==tecnicolist.CodigoTecnico)) #{tecnicolist.NombreTecnico}
+								else
+									each tecnicolist in tecnicoslist
+										option(value='#{tecnicolist.CodigoTecnico}') #{tecnicolist.NombreTecnico}								
+
+					div(class='actions' id='actions-AddCategoria_OT')
+						button(class=['ui', 'right', 'labeled', 'icon', 'button', 'teal'] id='guardar-Categoria_OT')='Guardar'
+							i(class=['edit', 'icon'])
+						a(class=['ui right labeled button teal icon'] onclick="regresar()")='Regresar'
+							i(class=['step', 'backward', 'text', 'icon'])
+
+					div(class=['ui','message','error'])
+
+	script(type='text/javascript').
+
+		function regresar() {
+			window.location.href ='/pantallas/OTcategoria';
+		}
+
+		var formAddOTcategoriaValidationRules =
+		{
+			IdSubTipo_OT: {
+				identifier  : 'IdSubTipo_OT',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar sub tipo de orden de trabajo'
+					}
+				]
+			},
+			Descripcion: {
+				identifier  : 'Descripcion',
+				rules: [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar nombre del de sub tipo de orden de trabajo'
+					}
+				]
+			},					
+			ActivoCategoria_OT: {
+				identifier  : 'ActivoCategoria_OT',
+				rules: [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar un estado de la categoría de orden de trabajo'
+					}
+				]
+			},
+			Peso: {
+				identifier  : 'Peso',
+				rules: [
+					{
+						type   : 'integer[1..10]',
+						prompt : 'Ingrese un valor valido entre 1 a 10'
+					}
+				]
+			},
+			CodigoTecnico: {
+				identifier  : 'CodigoTecnico',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar un técnico titular'
+					}
+				]
+			},
+			CodigoTecnico1: {
+				identifier  : 'CodigoTecnico1',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar un técnico suplente'
+					}
+				]
+			}
+		}
+
+		var formSettings =
+		{
+			onFailure : function() 
+			{
+				return false;
+			}
+		}
+
+		$('.form-addcategoriaot form').form(formAddOTcategoriaValidationRules, formSettings);

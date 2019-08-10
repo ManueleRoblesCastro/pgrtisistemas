@@ -1,0 +1,184 @@
+div(class=['ui','modal'] id='modalOTcard')
+	i(class=['close', 'icon'])
+	div(class=['floated', 'ten', 'wide', 'column', 'form-OTcard'])
+		button(class=['fluid', 'ui', 'button', 'disabled'])='Detalle de Orden de Trabajo'
+		br
+		
+		input(type='hidden' name='menuactual' id='id_menuactual' value=menuactual.datamenuselect.CodigoMenu.toString().trim())
+	
+		form(class=['ui','form','segment'] id='form-detailOTm')
+			div(class=['ui', 'five', 'fields'])
+				input(type='hidden' name='IdEstado' id='id_IdEstado')
+				div(class=['ui','field'])
+					label(for='IdOT')= 'ID'
+					input(type='text' name='IdOT' placeholder='0' id='id_IdOT' readonly size='10')
+				div(class=['ui','field'])
+					label(for='FechaOT')= 'Fecha Inicial'
+					div(class = ['ui', 'input', 'left', 'icon'])
+						i(class=['calendar','icon'])
+						input(type='text' name='FechaOT' id='id_FechaOT' readonly)
+				div(class=['ui','field'])
+					label(for='Prioridad')= 'Prioridad'
+					input(type='text' name='Prioridad' id='id_Prioridad' readonly)						
+				div(class=['ui','field'])
+					label(for='Peso')= 'Peso'
+					input(type='text' name='Peso' id='id_Peso' readonly)
+				div(class=['ui','field'])
+					label(for='FechaResolEsp')= 'Fecha Solución Esperada '
+					div(class = ['ui', 'input', 'left', 'icon'])
+						i(class=['calendar','icon'])				
+						input(type='text' name='Peso' id='id_FechaResolEsp' readonly)					
+					
+			div(class=['ui', 'four', 'fields'])
+				div(class=['ui','field'])
+					label(for='Empleado')= 'Empleado'
+					input(type='text' name='Empleado' id='id_Empleado' readonly)
+				div(class=['ui','field'])
+					label(for='Unidad')= 'Unidad'
+					input(type='text' name='Unidad' id='id_Unidad' readonly)
+				div(class=['ui','field'])
+					label(for='ActivoFijo')= 'Activo Fijo'
+					input(type='text' name='ActivoFijo' id='id_ActivoFijo' readonly)
+				div(class=['ui','field'])
+					label(for='CodigoActivoFijo')= 'Cod. Activo Fijo'
+					input(type='text' name='CodigoActivoFijo' id='id_CodigoActivoFijo' readonly)					
+					
+			div(class=['ui','field'])
+				label(for='Resumen')= 'Resumen de OT'
+				input(type='text' name='Resumen' id='id_Resumen' readonly)				
+				
+			div(class=['ui','field'])
+				label(for='DetalleSolucion')= 'Solución/ Comentario'
+				input(type='text' name='DetalleSolucion' id='id_DetalleSolucion')
+
+			div(class=['ui', 'three', 'fields'])
+				div(class=['ui','field'])
+					div(class=['ui checkbox'] id='idfiltro-N1')
+						input(type='checkbox' name='filtro-N1' id='id_filtro-N1')
+						label(for='FechaResolucion')= 'Cambiar Fecha de Finalización a'
+						div(class = ['ui', 'input', 'left', 'icon'])
+							i(class=['calendar','icon'])
+							input(input type='datetime-local' name='FechaResolucion' id='id_FechaResolucion')
+				div(class=['ui','field'])
+					div(class=['ui checkbox'] id='Reasignar-N1')					
+						label(for='Reasignado')= 'Reasignado'
+						input(type='checkbox' name='Reasignar' placeholder='0' id='id_Reasignar' readonly)
+						
+			div(class=['ui', 'three','fields'] id='id_inforeasignacion')
+				div(class=['ui', 'blue', 'message'])
+					div(class=['ui', 'horizontal', 'list'])
+						div(class='item')
+							label(for='IdMarcaReasig')= 'Empleado'
+							select(class=['ui', 'search' , 'dropdown'] name='IdMarcaReasig' id='id_IdMarcaReasig')
+						div(class='item')
+							label(for='IdUnidadReasig')= 'Unidad'
+							select(class=['ui', 'search' , 'dropdown'] name='IdUnidadReasig' id='id_IdUnidadReasig')
+						div(class='item')
+							label(for='IdLugarReasig')= 'Lugar'
+							select(class=['ui', 'search' , 'dropdown'] name='IdLugarReasig' id='id_IdLugarReasig')
+
+		div(class=['five center wide column'])
+			button(class=['ui yellow button'] id='edit-estadocurso')='En Curso'
+			button(class=['ui grey button'] id='edit-estadopausa')='En Taller'
+			button(class=['ui blue button'] id='edit-estadoreprfecha')='Reasignar'
+			button(class=['ui red button'] id='edit-estadoreqautor')='Descargar'
+			button(class=['ui green button'] id='edit-estadofinalizada')='Finalizar'
+			button(class=['ui black button'] id='edit-cerrar')='Cerrar'
+			
+script(type='text/javascript').
+
+	$( '#id_inforeasignacion' ).hide();
+
+	function cambiarestado(nombreestado) {
+	
+		if($('#id_DetalleSolucion').val()==undefined || $('#id_DetalleSolucion').val().length==0 ){
+			swal("Error!", "Debe Agregar una solución/comentario de la orden de trabajo.", "error");
+			return;		
+		}
+	
+		var codigoestado =0;
+		if (nombreestado=='edit-estadocurso'){ codigoestado = 1; }
+		if (nombreestado=='edit-estadopausa'){ codigoestado = 3; }
+		if (nombreestado=='edit-estadoreprfecha'){ codigoestado = 4; }
+		if (nombreestado=='edit-estadoreqautor'){ codigoestado = 6; }
+		if (nombreestado=='edit-estadofinalizada'){ codigoestado = 5; }
+		
+		//console.log(codigoestado);
+		//alert($('#id_menuactual').val());
+		
+		$.ajax({
+			url : '/pantallas/changeestOT/'+$('#id_IdOT').val()+'/'+codigoestado,
+			method : 'post',
+			data : {
+				DetalleSolucion: $('#id_DetalleSolucion').val(),
+				FechaResolucionChk: $('#id_filtro-N1').is(':checked'),
+				FechaResolucionSel: $('#id_FechaResolucion').val(),
+				IdMarcaReasig : $('#id_IdMarcaReasig').val(),
+				IdUnidadReasig : $('#id_IdUnidadReasig').val(),
+				IdLugarReasig : $('#id_IdLugarReasig').val()
+			},
+			success : function(dataobtenida){
+				if(dataobtenida.respuesta.res){
+					swal("Hecho!", "La orden de trabajo ha sido actualizada con exito.", "success");
+					$('.ui.modal').modal('hide');
+					window.location.href ='/pantallas/tbldetxestxtec/'+$('#id_menuactual').val();											
+				}else{
+					swal("Error!", "La orden de trabajo no se puede guardar. Detalle: " +  dataobtenida.menerror.parent.message, "error");
+					return;
+				}
+			}
+		});		
+		
+	};
+
+	$('#edit-cerrar').click(function (e){
+		$('.ui.modal').modal('hide');
+	});
+	
+	$('#edit-estadocurso').click(function (e){
+		cambiarestado($(this).attr('id'));		
+	});
+	
+	$('#edit-estadopausa').click(function (e){
+		cambiarestado($(this).attr('id'));
+	});	
+	
+	$('#edit-estadoreprfecha').click(function (e){	
+		cambiarestado($(this).attr('id'));	
+	});	
+	
+	$('#edit-estadoreqautor').click(function (e){
+		cambiarestado($(this).attr('id'));
+	});	
+	
+	$('#edit-estadofinalizada').click(function (e){
+	
+		var xestadoactual=$('#id_IdEstado').val();
+	
+		if(
+			(parseInt($('#id_IdMarcaReasig').val()) ==0 ||
+			parseInt($('#id_IdUnidadReasig').val())==0 ||
+			parseInt($('#id_IdLugarReasig').val())==0) && (parseInt(xestadoactual)==4)
+		){
+			swal("Advertencia!, Ver cuadro azul!", "Debe seleccionar empleado, unidad y ubicación para la reasignación", "warning");
+				
+			$( '#id_inforeasignacion' ).show();
+			return;
+		}	
+	
+		cambiarestado($(this).attr('id'));
+	});
+	
+	$('#Reasignar-N1').click(function (e){
+		var xcheck=$('#id_Reasignar').is(':checked');
+		if(xcheck){	
+			$.get( '/pantallas/datosreasignar/'+$('#id_IdOT').val(), function( objJsonDatosRec ) {
+				if(objJsonDatosRec!=undefined){
+					var ReasigEmpleado = objJsonDatosRec.datosreasignacion[0].NombreEmpleado;
+					var ReasigUnidad = objJsonDatosRec.datosreasignacion[0].Unidad;
+					var ReasigUbicacion = objJsonDatosRec.datosreasignacion[0].Ubicacion;
+					swal('Datos de Reasignación:', ReasigEmpleado + ' ' + ReasigUnidad + ' ' + ReasigUbicacion, 'success');
+				}
+			});
+		}
+	});

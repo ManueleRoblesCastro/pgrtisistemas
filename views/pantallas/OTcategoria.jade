@@ -1,0 +1,196 @@
+extends ../default
+block content
+
+	include ../menu/navmenu
+
+	div(class=['ui', 'grid', 'container'])
+		div(class='row')
+		div(class='row')
+		div(class=['ui', 'grid', 'container','stackable'])
+
+			div(class=['floated', 'sixteen', 'wide', 'column', 'segment'])
+
+				button(class=['fluid', 'ui', 'button', 'active'])='Mantenimiento de Categorias de Ordenes de Trabajo'
+
+				a(class=['ui button icon teal'] data-tooltip='Nuevo' data-position='top center' data-inverted='' id='nuevocategoriaOT' href='/pantallas/addcategoriaot/1/0')
+					i(class=['add icon'])
+				div(class=['ui', 'slider', 'checkbox'])
+					input(type='checkbox' name='filtro-N' id='idfiltro-N')
+					label='Ver todos los sub tipos de Ordenes de Trabajo'
+
+				table(class=['ui','table','celled'] id='tbl-categoriaot')
+					thead
+						tr
+							th='Id'
+							th='Sub Tipo'
+							th='Categoria'
+							th='Estado'
+							th='Peso'
+							th='Titular'
+							th='Suplente'							
+							th='Opciones'
+					tbody(id='myTableBody')
+						each datocategoriaot in datoscategoriaot
+							tr
+								td
+									a(class=['ui button black basic'] href='/pantallas/addcategoriaot/2/'+ datocategoriaot.IdCategoria_OT data-tooltip='Ver Detalle' data-position='top right' data-inverted='')=datocategoriaot.IdCategoria_OT
+								td= datocategoriaot.Subtipo
+								td= datocategoriaot.Descripcion
+								td= datocategoriaot.ActivoCategoria_OT
+								td= datocategoriaot.Peso
+								td= datocategoriaot.CodigoTecnico
+								td= datocategoriaot.CodigoTecnico1								
+								td
+									a(class=['ui button teal icon'] onclick="inactivar_categoriaot("+datocategoriaot.IdCategoria_OT+")" data-tooltip='Inactivar' data-position='top right' data-inverted='')
+										i(class=['window close icon'])
+									a(class=['ui button teal icon'] onclick="borrar_categoriaot("+datocategoriaot.IdCategoria_OT+")" data-tooltip='Borrar' data-position='top right' data-inverted='')
+										i(class=['trash icon'])
+
+	script(type='text/javascript').
+
+		function inactivar_categoriaot(IdCategoria_OT) {
+
+			swal({
+				title: "Esta seguro de inactivar la categoria OT " + IdCategoria_OT +  "?",
+				text: "La categoria OT no sera observable por el filtro activo.",
+				type: "warning",
+				showCancelButton: true,
+				cancelButtonText: "No, Cancelar",
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Si, Inactivar!",
+				closeOnConfirm: false,
+				closeOnCancel: true
+			},
+
+			function() {
+
+				$.ajax({
+					url : '/pantallas/disablecategoriaot/'+IdCategoria_OT,
+					method : 'post',
+					success : function(dataobtenida){
+						if(dataobtenida.respuesta.res){
+							swal("Hecho!", "la categoria de orden de trabajo ha sido actualizado con exito.", "success");
+							window.location.href ='/pantallas/OTcategoria';											
+						}else{
+							swal("Error!", "La categoría de orden de trabajo no se puede guardar. Detalle: " +  dataobtenida.menerror.parent.message, "error");
+							return;
+						}
+					}
+				});
+
+			});
+
+		}
+
+		function borrar_categoriaot(IdCategoria_OT) {
+
+			swal({
+				title: "Esta seguro de borrar la categoria ot " + IdCategoria_OT +  "?",
+				text: "Tambien seran borrados registros asociados a la categoria.",
+				type: "warning",
+				showCancelButton: true,
+				cancelButtonText: "No, Cancelar",
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Si, Borrar!",
+				closeOnConfirm: false,
+				closeOnCancel: true
+			},
+
+			function() {
+
+				$.ajax({
+					url : '/pantallas/delcategoriaot/'+IdCategoria_OT,
+					method : 'post',
+					success : function(dataobtenida){
+						if(dataobtenida.respuesta.res){
+							swal("Hecho!", "La categoria de orden de trabajo ha sido actualizado con exito.", "success");
+							window.location.href ='/pantallas/OTcategoria';											
+						}else{
+							swal("Error!", "La categoria de orden de trabajo no se puede guardar. Detalle: " +  dataobtenida.menerror.parent.message, "error");
+							return;
+						}
+					}
+				});
+
+			});
+
+		}
+
+		$('.ui.checkbox').checkbox({
+			beforeChecked: function() {
+				$('#tbl-categoriaot').DataTable()
+					.columns(3)
+					.search( '' )
+					.draw();
+			},
+			beforeUnchecked: function() {
+				$('#tbl-categoriaot').DataTable()
+					.columns(3)
+					.search( 'A' )
+					.draw();
+			}			
+		});
+
+		$('#tbl-categoriaot').DataTable({
+			"dom": '<"top"if>rt<"bottom"lpB><"clear">',
+
+			columnDefs: [
+				{ width: '12%', targets: 0 },
+				{ width: '12%', targets: 1 },
+				{ width: '12%', targets: 2 },
+				{ width: '12%', targets: 3 },
+				{ width: '12%', targets: 4 },
+				{ width: '12%', targets: 5 }
+			],
+
+			colReorder: true,
+			responsive: true,			
+			paging: true,
+			select: {
+				style: 'single'
+			},
+			'pageLength': 5,
+			 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "todo"]],
+			'order': [[ 0, 'desc' ]],
+			stateSave: true,
+			'language': {
+				   url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json',
+				select: {
+					rows: "%d fila(s) seleccionada(s)"
+				}
+			},
+			"autoWidth": false,
+			buttons: [
+				{
+					title:  'Categorias de Ordenes de Trabajo ',
+					extend: 'excelHtml5',
+					filename: 'Categoria_OT',
+					text: 'Excel',
+					customize: function(xlsx) {
+					var sheet = xlsx.xl.worksheets['sheet1.xml'];
+					// Loop over the cells in column `F`
+					$('row c[r^="F"]', sheet).each( function () {
+					// Get the value and strip the non numeric characters
+					if ( $('is t', this).text().replace(/[^\d]/g, '') * 1 >= 500000 ) {
+							$(this).attr( 's', '20' );
+							}
+						});
+					}
+				}
+			],			
+			"rowCallback": function( row, data, index ) {
+				if(index%2 == 0){
+					$(row).removeClass('myodd myeven');
+					$(row).addClass('myodd');
+					}
+				else{
+					$(row).removeClass('myodd myeven');
+					$(row).addClass('myeven');
+				}
+			}
+		});
+
+		$('#tbl-categoriaot').DataTable()
+			.columns(3)
+			.search( 'A' )
+			.draw();

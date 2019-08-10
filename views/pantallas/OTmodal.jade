@@ -1,0 +1,218 @@
+div(class=['ui','modal'] id='modalOT')
+	i(class=['close', 'icon'])
+	div(class=['floated', 'ten', 'wide', 'column', 'form-OT'])
+		button(class=['fluid', 'ui', 'button', 'disabled'])='Detalle de Orden de Trabajo'
+		br
+
+		input(type='hidden' id='id_num_fila')
+		input(type='hidden' id='id_operacion')
+
+		form(class=['ui','form','segment'] method='get' id='form-detailOT')
+			div(class=['ui', 'three', 'fields'])
+				div(class=['ui','field'])
+					label(for='IdOT')= 'Identificador (ID, Automático)'
+					input(type='text' name='IdOT' placeholder='0' id='id_IdOT' readonly)
+				div(class=['ui','field'])
+					label(for='FechaOT')= 'Fecha/Hora Inicial'
+					div(class = ['ui', 'input', 'left', 'icon'])
+						i(class=['calendar','icon'])
+						input(input type='datetime-local' name='FechaOT' id='id_FechaOT')
+				div(class=['ui','field'])
+					label(for='IdMarca')= 'Empleado'
+					select(class=['ui', 'search' , 'dropdown'] name='IdMarca' id='id_IdMarca')
+						if empleadoslist!=undefined
+							each empleadolist in empleadoslist
+								option(value='#{empleadolist.IdMarca}') #{empleadolist.NombreEmpleado}
+			div(class=['ui', 'three', 'fields'])								
+				div(class=['ui','field'])
+					label(for='IdUnidad')= 'Unidad'
+					select(class=['ui', 'search' , 'dropdown'] name='IdUnidad' id='id_IdUnidad')
+						if unidadeslist!=undefined
+							each unidadlist in unidadeslist
+								option(value='#{unidadlist.IdUnidad}') #{unidadlist.NombreUnidad}
+				div(class=['ui','field'])
+					label(for='IdLugar')= 'Lugar'
+					select(class=['ui', 'search' , 'dropdown'] name='IdLugar' id='id_IdLugar')
+						if lugareslist!=undefined
+							each lugarlist in lugareslist
+								option(value='#{lugarlist.IdLugar}') #{lugarlist.NombreLugar}
+				div(class=['ui','field'])
+					label(for='CodigoActivoFijo')= 'Activo Fijo'
+					select(class=['ui', 'search' , 'dropdown'] name='CodigoActivoFijo' id='id_CodigoActivoFijo')
+						if activofijoslist!=undefined
+							each activofijolist in activofijoslist
+								option(value='#{activofijolist.CodigoActivoFijo}') #{activofijolist.NombreActivoFijo}
+			div(class=['ui', 'two', 'fields'])								
+				div(class=['ui','field'])
+					label(for='Resumen')= 'Resumen de OT'
+					//-input(type='text' name='Resumen' placeholder='Digite requerimiento' id='id_Resumen' maxlength='250')
+					textarea(rows ='2' cols='1' name='Resumen' id='id_Resumen' placeholder='Digite requerimiento' maxlength='250')					
+				div(class=['ui','field'])
+					label(for='DetalleSolucion')= 'Solución / Comentario'
+					//-input(type='text' name='DetalleSolucion' placeholder='Solución / Comentario' id='id_DetalleSolucion' maxlength='250')
+					textarea(rows ='2' cols='1' name='DetalleSolucion' id='id_DetalleSolucion' placeholder='Solución / Comentario' maxlength='250')										
+			div(class=['ui', 'three', 'fields'])
+				div(class=['ui','field'])
+					label(for='IdPrioridad')= 'Prioridad'
+					select(class=['ui', 'search' , 'dropdown'] name='IdPrioridad' id='id_IdPrioridad')
+						if prioridadeslist!=undefined
+							each prioridadlist in prioridadeslist
+								option(value='#{prioridadlist.IdPrioridad}') #{prioridadlist.NombrePrioridad}
+				div(class=['ui','field'])
+					label(for='IdEstado')= 'Estado'
+					select(class=['ui', 'search' , 'dropdown'] name='IdEstado' id='id_IdEstado')
+						if estadoslist!=undefined
+							each estadolist in estadoslist
+								option(value='#{estadolist.IdPrioridad}') #{estadolist.NombreEstado}
+				div(class=['ui','field'])
+					label(for='FechaResolEsp')= 'Fecha Resolución Esperada'
+					div(class = ['ui', 'input', 'left', 'icon'])
+						i(class=['calendar','icon'])
+						input(type='text' name='FechaResolEsp' id='id_FechaResolEsp')
+			div(class=['ui', 'three', 'fields'])
+				div(class=['ui','field'])
+					label(for='IdTipo_OT')= 'Tipo'
+					select(class=['ui', 'search' , 'dropdown'] name='IdTipo_OT' id='id_IdTipo_OT')
+						if tiposlist!=undefined
+							each tipolist in tiposlist
+								option(value='#{tipolist.IdTipo_OT}') #{tipolist.NombreTipoOT}
+				div(class=['ui','field'])
+					label(for='IdSubTipo_OT')= 'Sub Tipo'
+					select(class=['ui', 'search' , 'dropdown'] name='IdSubTipo_OT' id='id_IdSubTipo_OT')
+						if subtiposlist!=undefined
+							each subtipolist in subtiposlist
+								option(value='#{subtipolist.IdSubTipo_OT}') #{subtipolist.Descripcion}
+				div(class=['ui','field'])
+					label(for='IdCategoria_OT')= 'Categoria'
+					select(class=['ui', 'search' , 'dropdown'] name='IdCategoria_OT' id='id_IdCategoria_OT')
+						if categoriaslist!=undefined
+							each categorialist in categoriaslist
+								option(value='#{categorialist.IdCategoria_OT}') #{categorialist.Descripcion}
+			div(class=['ui', 'three', 'fields'])
+				div(class=['ui','field'])
+					label(for='CodigoTecnico')= 'Técnico'
+					select(class=['ui', 'search' , 'dropdown'] name='CodigoTecnico' id='id_CodigoTecnico')
+						if tecnicoslist!=undefined
+							each tecnicolist in tecnicoslist
+								option(value='#{tecnicolist.CodigoTecnico}') #{tecnicolist.NombreTecnico}								
+				div(class=['ui','field'])
+					label(for='Peso')= 'Peso'
+					input(type='number' name='Peso' placeholder='0' id='id_Peso' readonly)
+				div(class=['ui','field'])
+					div(class=['ui checkbox'] id='Reasignar-N1')					
+						label(for='Reasignado')= 'Reasignado'
+						input(type='checkbox' name='Reasignar' placeholder='0' id='id_Reasignar' readonly)
+
+		div(class='actions')
+			button(class=['ui','button', 'blue'] id='edit-OTfoot')='Guardar'
+			button(class=['ui','button', 'blue'] id='cerrar-OTfoot')='Cerrar'
+			button(class=['ui','button', 'blue'] id='imprimir-OTfoot')='Imprimir Etiqueta'
+
+script(type='text/javascript').
+
+	function imprimirNumeroTicket(ticket, fecha, unidad, lugar, requerimiento, tecnico){
+			var contenidoTicket = "<div id=\"imprimir\" style=\"text-align:center; height:90px; width:250px; \" ><b>UTI&nbsp;PGR</b><font face=\"arial\" size=\"6\"><br><b>Orden&nbsp;de&nbsp;Trabajo&nbsp;<br>No.&nbsp;"+ticket+"</b></font><br>Fecha:&nbsp;"+fecha+"<br>Unidad:&nbsp;"+unidad+"<br>Lugar:&nbsp;"+lugar+"<br>Req.:&nbsp;"+requerimiento+"<br>Cod.Tec.:&nbsp;"+tecnico+"<br><br></div>";
+			var tmp;
+			tmp = window.open(" ","Impresión.");
+			tmp.document.open();
+			tmp.document.write(contenidoTicket);
+			tmp.document.close();
+			tmp.print();
+			tmp.close();
+	}
+
+	$('#edit-OTfoot').click(function (e){
+	
+		if($('#id_Resumen').val()==undefined || $('#id_Resumen').val().length==0 ){
+			swal("Error!", "Debe Agregar un resumen de la orden de trabajo.", "error");
+			return;		
+		}
+		if($('#id_IdSubTipo_OT').val()==undefined || $('#id_IdSubTipo_OT').val().length==0 || $('#id_IdSubTipo_OT').val()==0){
+			swal("Error!", "Debe Agregar un sub tipo para la orden de trabajo.", "error");
+			return;		
+		}
+		if($('#id_Peso').val()==undefined || $('#id_Peso').val().length==0 || $('#id_Peso').val()==0){
+			swal("Error!", "Debe seleccionar un subtipo de OT.", "error");
+			return;		
+		}					
+	
+		$.ajax({
+			url : '/pantallas/addOTs/'+$('#id_operacion').val()+'/'+$('#id_IdOT').val(),
+			method : 'post',
+			data : {
+				FechaOT: $('#id_FechaOT').val(),
+				IdMarca: $('#id_IdMarca').val(),
+				IdUnidad: $('#id_IdUnidad').val(),
+				IdLugar: $('#id_IdLugar').val(),
+				CodigoActivoFijo: $('#id_CodigoActivoFijo').val(),
+				Resumen: $('#id_Resumen').val(),
+				DetalleSolucion: $('#id_DetalleSolucion').val(),
+				IdPrioridad: $('#id_IdPrioridad').val(),
+				IdEstado: $('#id_IdEstado').val(),
+				IdTipo_OT: $('#id_IdTipo_OT').val(),
+				IdSubTipo_OT: $('#id_IdSubTipo_OT').val(),
+				IdCategoria_OT: $('#id_IdCategoria_OT').val(),
+				CodigoTecnico: $('#id_CodigoTecnico').val(),
+				FechaResolEsp : $('#id_FechaResolEsp').val()
+			},
+			success : function(dataobtenida){
+				if(dataobtenida.respuesta.res){
+					swal("Hecho!", "La orden de trabajo ha sido actualizada con exito.", "success");
+					$('.ui.modal').modal('hide');
+					window.location.href ='/pantallas/tableroxtecnico/UTIMEOT06';											
+				}else{
+					swal("Error!", "La orden de trabajo no se puede guardar. Detalle: " +  dataobtenida.menerror.parent.message, "error");
+					return;
+				}
+			}
+		});
+
+	});
+	
+	$('#cerrar-OTfoot').click(function (e){
+		$('.ui.modal').modal('hide');
+	});
+	
+	$('#imprimir-OTfoot').click(function (e){
+		var otid = parseInt($('#id_IdOT').val());
+		if(otid>0){
+			imprimirNumeroTicket(
+				otid, 
+				$('#id_FechaOT').val(),
+				$("#id_IdUnidad :selected").text(),
+				$("#id_IdLugar :selected").text(), 
+				$('#id_Resumen').val().substring(0, 40),
+				$('#id_CodigoTecnico').val()
+			);
+		}
+		else{
+			$.get( '/pantallas/ultimoIDOT', function( objJsonDatosRec ) {
+				if(objJsonDatosRec!=undefined){
+					//alert(objJsonDatosRec.datoidot[0].IdOTmax);
+					otid =objJsonDatosRec.datoidot[0].IdOTmax;
+					imprimirNumeroTicket(
+						otid, 
+						$('#id_FechaOT').val(),
+						$("#id_IdUnidad :selected").text(),
+						$("#id_IdLugar :selected").text(), 
+						$('#id_Resumen').val().substring(0, 40),
+						$('#id_CodigoTecnico').val()
+					);
+				}				
+			});			
+		}
+	});
+	
+	$('#Reasignar-N1').click(function (e){
+		var xcheck=$('#id_Reasignar').is(':checked');
+		if(xcheck){	
+			$.get( '/pantallas/datosreasignar/'+$('#id_IdOT').val(), function( objJsonDatosRec ) {
+				if(objJsonDatosRec!=undefined){
+					var ReasigEmpleado = objJsonDatosRec.datosreasignacion[0].NombreEmpleado;
+					var ReasigUnidad = objJsonDatosRec.datosreasignacion[0].Unidad;
+					var ReasigUbicacion = objJsonDatosRec.datosreasignacion[0].Ubicacion;
+					swal('Datos de Reasignación:', ReasigEmpleado + ' ' + ReasigUnidad + ' ' + ReasigUbicacion, 'success');
+				}
+			});
+		}
+	});

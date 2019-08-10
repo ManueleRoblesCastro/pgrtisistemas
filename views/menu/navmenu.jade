@@ -1,0 +1,136 @@
+
+div(class=['ui', 'grid', 'container'])
+	div(class=['ui', 'sidebar', 'vertical', 'left', 'inverted', 'menu'] id='myContainerMenu')
+		div(class='item')
+			div(class='header')='CATALOGOS'	
+			if user.CodigoRol.NombreRol.toString().trim()!='ROLE_SOPOR' && user.CodigoRol.NombreRol.toString().trim()!='ROLE_QUERY' 
+				div(class='menu')
+					a(class=['ui', 'item'] href='/pantallas/tecnicos')='TECNICOS'
+				div(class='menu')
+					a(class=['ui', 'item'] href='/pantallas/OTtipo')='TIPO OT'
+				div(class='menu')
+					a(class=['ui', 'item'] href='/pantallas/OTsubtipo')='SUB-TIPO OT'
+				div(class='menu')
+					a(class=['ui', 'item'] href='/pantallas/OTcategoria')='CATEGORIA OT'
+
+	div(class=['ui', 'basic', 'icon', 'top', 'fixed', 'menu'] id='contenedormenu')
+		div(id='toggle' class='item')='Catalogos'
+			i(class=['sidebar', 'icon'])
+
+		div(class=['ui', 'dropdown', 'icon', 'item'], id='mainmenu3')
+			div(class = ['ui', 'input', 'right', 'icon'])='Ordenes de Trabajo'
+			i(class=['file', 'icon'])
+		
+		if user.CodigoRol.NombreRol.toString().trim()!='ROLE_QUERY'
+			div(class=['ui', 'dropdown', 'icon', 'item'], id='mainmenu4')
+				div(class = ['ui', 'input', 'right', 'icon'] id='mainchangepwd')='Cambiar Clave'
+				i(class=['edit', 'icon'])
+
+		if user.CodigoRol.NombreRol.toString().trim()!='ROLE_QUERY'
+			div(class=['ui', 'dropdown', 'icon', 'item'], id='mainmenu1')
+				div(class = ['ui', 'input', 'right', 'icon'])='En Linea'
+				i(class=['wrench', 'icon'])
+				div(class='menu' id='vertmenu')
+					div(class='item' id='submnuVerRequer')='Solicitud de Requerimiento Técnico'
+					div(class='item' id='submnuChat')='Asistencia'
+					div(class='divider')
+					div(class='item')
+						i(class=['dropdown', 'icon'])
+						span(class='text')='Sistema'
+						div(class='menu')
+							div(class='item' id='submnuVerDescri')='Descripción'
+							div(class='divider')
+							div(class='item' id='submnuVerPreguntas')='Preguntas mas frecuentes'
+					div(class='divider')
+					div(class='item' id='submnuCredito')='Créditos'
+					
+		div(class=['ui', 'dropdown', 'icon', 'item'], id='mainmenu5')
+			if user.Databody.toString().trim() != 0
+				div(class = ['ui', 'input', 'right', 'icon'] id='mainaniosel')='PERIODO: '+ user.Databody.toString().trim()
+			else
+				div(class = ['ui', 'input', 'right', 'icon'] id='mainaniosel')='PERIODO: Todo'
+
+		div(class=['right', 'menu'])
+		div(class='content')
+			div(class=['ui', 'sub', 'header'])=user.NombresTecnico + ' ' + user.ApellidosTecnico
+			span(class=['text'] id='idspanperfil')=user.CodigoRol.NombreRol + ' (' + user.CodigoArea.NombreArea + ')'
+
+		a(class=['ui', 'item'] href='/logout')='Cerrar Sesión'
+			i(class=['user', 'icon'])
+
+	div(class=['ui', 'center', 'aligned', 'grid'])
+		div(class='row')
+		div(class='row')
+
+		- var contadorfila=0
+		if datosmenusxtec!=undefined
+			for datomenusxtec in datosmenusxtec
+				if datomenusxtec.CodigoMenuSuperior.toString().trim() == menuactual.menu
+					div(class=['ui', datomenusxtec.ColorSemantic.toString(), 'inverted',  'circular', 'segment', 'center', 'floated'] id=datomenusxtec.CodigoMenu.toString().trim() onclick="menunivel2('"+ datomenusxtec.CodigoMenu.toString().trim() +"', '"+datomenusxtec.UrlMenu.toString().trim()+"')")
+						h2(class=['ui', 'inverted', 'header'])=datomenusxtec.NombreMenu.toString()
+							div(class = ['sub', 'header'])=datomenusxtec.AyudaMenu.toString()
+								i(class=['big', datomenusxtec.IconoSemantic.toString(), 'icon'])
+								
+								if (datomenusxtec.CodigoMenuSuperior.toString().trim()=='UTIMEOT')
+									if datosxestadoxtec!=undefined
+										for datoxestadoxtec in datosxestadoxtec
+											if (datoxestadoxtec.IdEstado==1) && (datomenusxtec.CodigoMenu.toString().trim()=='UTIMEOT01')						
+												div(class=['ui', 'large', 'label', datomenusxtec.ColorSemantic.toString()])='Peso: '+ datoxestadoxtec.SumaPeso + ' OTs: ' + datoxestadoxtec.ConteoEstado
+											if (datoxestadoxtec.IdEstado==3) && (datomenusxtec.CodigoMenu.toString().trim()=='UTIMEOT02')						
+												div(class=['ui', 'large', 'label', datomenusxtec.ColorSemantic.toString()])='Peso: '+ datoxestadoxtec.SumaPeso + ' OTs: ' + datoxestadoxtec.ConteoEstado
+											if (datoxestadoxtec.IdEstado==4) && (datomenusxtec.CodigoMenu.toString().trim()=='UTIMEOT03')						
+												div(class=['ui', 'large', 'label', datomenusxtec.ColorSemantic.toString()])='Peso: '+ datoxestadoxtec.SumaPeso + ' OTs: ' + datoxestadoxtec.ConteoEstado
+											if (datoxestadoxtec.IdEstado==5) && (datomenusxtec.CodigoMenu.toString().trim()=='UTIMEOT04')						
+												div(class=['ui', 'large', 'label', datomenusxtec.ColorSemantic.toString()])='Peso: '+ datoxestadoxtec.SumaPeso + ' OTs: ' + datoxestadoxtec.ConteoEstado
+											if (datoxestadoxtec.IdEstado==6) && (datomenusxtec.CodigoMenu.toString().trim()=='UTIMEOT05')						
+												div(class=['ui', 'large', 'label', datomenusxtec.ColorSemantic.toString()])='Peso: '+ datoxestadoxtec.SumaPeso + ' OTs: ' + datoxestadoxtec.ConteoEstado
+																														
+				if menuactual.menu != 'UTIME' && contadorfila== (datosmenusxtec.length -1)
+					div(class=['floated', 'center', 'aligned', 'four', 'wide', 'column','segment'] onclick="menunivel2('"+ menuactual.menusuperior.CodigoMenuSuperior.toString().trim() +"', '"+datomenusxtec.UrlMenu.toString().trim() +"')" id=menuactual.menusuperior.CodigoMenuSuperior.toString().trim())
+						h3(class=['ui', 'icon', 'header'])
+							i(class=['big', 'step', 'backward', 'text', 'circular', 'icon'])
+							div(class='content')='Regresar'
+				- contadorfila=contadorfila+1								
+
+		script(type='text/javascript').
+
+			function menunivel2(codigomenu, urldemenu) {
+				$('#'+codigomenu).transition({ animation : 'pulse', reverse : true, interval : 200 });	
+				if (codigomenu != 'UTIME'){
+					window.location.href = urldemenu;
+				}else{
+					window.location.href ='/menu/nav';
+				}
+			}
+
+			$('#mainmenu1').dropdown({
+				on: 'hover'
+			});
+
+			$('#mainmenu2').dropdown({
+				on: 'hover'
+			});
+			
+			$('#mainchangepwd').on('click',function(){
+				//alert('aqui cambiar clave');
+				$('#modalChangepwd').modal({
+					closable : false,
+					onShow: function(){
+						$('#id_IdPwdActual').val('');
+						$('#id_IdPwdNuevo1').val('');
+						$('#id_IdPwdNuevo2').val('');
+					}
+				});
+				
+				$('#modalChangepwd').modal('show');
+				return;
+			});			
+
+			$('#toggle').click( function(){
+				//$('#myContainerMenu').sidebar('attach events', '.menu .item');
+				$('#myContainerMenu').sidebar('toggle');
+			});
+
+			$('#mainmenu3').on('click',function(){
+				window.location.href ='/menu/nav';
+			});

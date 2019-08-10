@@ -1,0 +1,152 @@
+extends ../default
+block content
+
+	include ../menu/navmenu
+
+	div(class=['ui','container','grid','stackable'])
+		div(class='row')
+		div(class='row')
+
+		div(class=['floated', 'fifteen', 'wide', 'column'])
+
+			button(class=['fluid', 'ui', 'button', 'active'])='Agregar Tecnicos'
+
+			div(class=['ui', 'grey', 'inverted', 'segment', 'form-addtecnicos'] )
+
+				form(class=['ui','form'], action='/pantallas/savetecnico/2', method='post')
+					div(class=['ui', 'three', 'fields'])
+						div(class=['ui', 'field'])
+							label(for='CodigoTecnico')= 'Usuario'
+							div(class = ['ui', 'input', 'left', 'icon'])
+								input(type='text' placeholder='Usuario' name='CodigoTecnico' id='idCodigoTecnico' maxlength='10')
+						div(class=['ui','field'])
+							label(for='IdArea')= 'Area'
+							select(class=['ui', 'search' , 'dropdown'] name='IdArea' id='idIdArea')
+								each tecarea in tecareas
+									option(value='#{tecarea.IdArea}') #{tecarea.NombreArea}
+						div(class=['ui','field'])
+							label(for='IdRol')= 'Rol'
+							select(class=['ui', 'search' , 'dropdown'] name='IdRol' id='idIdRol')
+								each tecrol in tecroles
+									option(value='#{tecrol.IdRol}') #{tecrol.NombreRol}
+					div(class=['ui', 'three', 'fields'])									
+						div(class=['ui','field'])
+							label(for='NombreTecnico')= 'Nombres'
+							input(type='text' name='NombreTecnico' placeholder='Nombres' id='idNombreTecnico' maxlength='50')
+						div(class=['ui','field'])
+							label(for='ApellidoTecnico')= 'Apellidos'
+							input(type='text' name='ApellidoTecnico' placeholder='Apellidos' id='idApellidoTecnico' maxlength='50')
+						div(class=['ui','field'])
+							label(for='CodigoTecnicoSupervisor')= 'Supervisor'
+							select(class=['ui', 'search' , 'dropdown'] name='CodigoTecnicoSupervisor' id='idCodigoTecnicoSupervisor')
+								each tecnico in tecnicos
+									option(value='#{tecnico.CodigoTecnico}') #{tecnico.NombreCompleto}																		
+					div(class=['ui', 'three', 'fields'])
+						div(class=['ui','field'])
+							label(for='ActivoTecnico')= 'Estado'
+							select(class=['ui', 'search' , 'dropdown'] name='ActivoTecnico' id='idActivoTecnico')
+								option(value='A', selected)='Activo'
+								option(value='I', selected)='Inactivo'
+						div(class=['ui','field'])
+							label(for='CorreoE')= 'Correo Electrónico'
+							input(type='text' name='CorreoE' id='idCorreoE' maxlength='50')								
+
+					div(class='actions' id='actions-AddTecnico')
+						button(class=['ui', 'right', 'labeled', 'icon', 'button', 'teal'] id='guardar-tecnico')='Guardar'
+							i(class=['edit', 'icon'])
+						a(class=['ui right labeled button teal icon'] onclick="regresar()")='Regresar'
+							i(class=['step', 'backward', 'text', 'icon'])
+
+					div(class=['ui','message','error'])
+
+	script(type='text/javascript').
+
+		function regresar() {
+			window.location.href ='/pantallas/tecnicos';
+		}
+
+		var formAddTecnicosValidationRules =
+		{
+			CodigoTecnico: {
+				identifier  : 'CodigoTecnico',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar usuario de tecnico'
+					}
+				]
+			},		
+			IdArea: {
+				identifier : 'IdArea',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe seleccionar Area de Trabajo'
+					}
+				]			
+			},
+			IdRol: {
+				identifier : 'IdRol',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe seleccionar un Rol'
+					}
+				]			
+			},			
+			NombreTecnico: {
+				identifier  : 'NombreTecnico',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar nombres de tecnico'
+					}
+				]
+			},
+			ApellidoTecnico: {
+				identifier  : 'ApellidoTecnico',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar apellidos de tecnico'
+					}
+				]
+			},			
+			CodigoTecnicoSupervisor: {
+				identifier : 'CodigoTecnicoSupervisor',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe seleccionar un tecnico supervisor'
+					}
+				]			
+			},
+			ActivoTecnico: {
+				identifier  : 'ActivoTecnico',
+				rules: [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar un estado del tecnico'
+					}
+				]
+			},			
+			CorreoE: {
+				identifier  : 'CorreoE',
+				rules : [
+					{
+						type   : 'empty',
+						prompt : 'Debe ingresar correo electrónico de tecnico'
+					}
+				]
+			}
+		}
+
+		var formSettings =
+		{
+			onFailure : function() 
+			{
+				return false;
+			}
+		}
+
+		$('.form-addtecnicos form').form(formAddTecnicosValidationRules, formSettings);

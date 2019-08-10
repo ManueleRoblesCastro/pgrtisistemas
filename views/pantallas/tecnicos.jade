@@ -1,0 +1,201 @@
+extends ../default
+block content
+
+	include ../menu/navmenu
+
+	div(class=['ui', 'grid', 'container'])
+		div(class='row')
+		div(class='row')
+		div(class=['ui', 'grid', 'container','stackable'])
+
+			div(class=['floated', 'sixteen', 'wide', 'column', 'segment'])
+
+				button(class=['fluid', 'ui', 'button', 'active'])='Mantenimiento de Técnicos'
+
+				a(class=['ui button icon teal'] data-tooltip='Nuevo' data-position='top center' data-inverted='' id='nuevotecnico' href='/pantallas/addtecnicos')
+					i(class=['add icon'])
+				div(class=['ui', 'slider', 'checkbox'])
+					input(type='checkbox' name='filtro-N' id='idfiltro-N')
+					label='Ver todos los tecnicos'
+
+				table(class=['ui','table','celled'] id='tbl-tecnicos')
+					thead
+						tr
+							th='Código'
+							th='Area'
+							th='Rol'
+							th='Nombres'
+							th='Apellidos'
+							th='Estado'
+							th='Opciones'
+					tbody(id='myTableBody')
+						each datostecnico in datostecnicos
+							tr
+								td
+									a(class=['ui button black basic'] href='/pantallas/edittecnicos/'+ datostecnico.CodigoTecnico data-tooltip='Ver Detalle' data-position='top right' data-inverted='')=datostecnico.CodigoTecnico
+								td= datostecnico.NombreArea
+								td= datostecnico.NombreRol
+								td= datostecnico.NombreTecnico
+								td= datostecnico.ApellidoTecnico
+								td= datostecnico.ActivoTecnico
+								td
+									a(class=['ui button teal icon'] onclick="inactivar_tecnico('"+datostecnico.CodigoTecnico+"')" data-tooltip='Inactivar' data-position='top right' data-inverted='')
+										i(class=['window close icon'])
+									a(class=['ui button teal icon'] onclick="borrar_tecnico('"+datostecnico.CodigoTecnico+"')" data-tooltip='Borrar' data-position='top right' data-inverted='')
+										i(class=['trash icon'])
+
+	script(type='text/javascript').
+
+		function inactivar_tecnico(codigotecnico) {
+
+			swal({
+				title: "Esta seguro de inactivar el tecnico " + codigotecnico +  "?",
+				text: "El tecnico no sera observable por el filtro activo.",
+				type: "warning",
+				showCancelButton: true,
+				cancelButtonText: "No, Cancelar",
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Si, Inactivar!",
+				closeOnConfirm: false,
+				closeOnCancel: true
+			},
+
+			function() {
+
+				var weHaveSuccess = false;
+				$.ajax({
+					url : '/pantallas/disabletecnicos/',
+					type: 'POST',
+					dataType:'json',
+					data : { 
+					 CodigoTecnico : codigotecnico
+					},
+					success: function(datosretornados){
+						if(datosretornados.res==true){
+							swal("Hecho!", "El tecnico ha sido inactivado.", "success");
+							window.location.href ='/pantallas/tecnicos';
+						}
+						weHaveSuccess = true;
+					},
+					error: function(xhr, status, error){
+						swal("Error!", "No se puede conectar a maquina servidor del sistema!", "error");
+					},
+					complete: function(){
+						if(!weHaveSuccess){
+							swal("Error!", "No se puede conectar a maquina servidor del sistema!", "error");
+						}
+					}
+				});
+
+			});
+
+		}
+
+		function borrar_tecnico(codigotecnico) {
+
+			swal({
+				title: "Esta seguro de borrar el tecnico " + codigotecnico +  "?",
+				text: "Tambien seran borrados registros asociados al tecnico.",
+				type: "warning",
+				showCancelButton: true,
+				cancelButtonText: "No, Cancelar",
+				confirmButtonColor: "#DD6B55",
+				confirmButtonText: "Si, Borrar!",
+				closeOnConfirm: false,
+				closeOnCancel: true
+			},
+
+			function() {
+
+				var weHaveSuccess = false;
+				$.ajax({
+					url : '/pantallas/deltecnicos/',
+					type: 'POST',
+					dataType:'json',
+					data : { 
+					 CodigoTecnico : codigotecnico
+					},
+					success: function(datosretornados){
+						if(datosretornados.res==true){
+							swal("Hecho!", "El tecnico ha sido borrado.", "success");
+							window.location.href ='/pantallas/tecnicos';
+						}
+						weHaveSuccess = true;
+					},
+					error: function(xhr, status, error){
+						swal("Error!", "No se puede conectar a maquina servidor del sistema!", "error");
+					},
+					complete: function(){
+						if(!weHaveSuccess){
+							swal("Error!", "No se puede conectar a maquina servidor del sistema!", "error");
+						}
+					}
+				});
+
+			});
+
+		}
+
+		$('.ui.checkbox').checkbox({
+			beforeChecked: function() {
+				$('#tbl-tecnicos').DataTable()
+					.columns(5)
+					.search( '' )
+					.draw();
+			},
+			beforeUnchecked: function() {
+				$('#tbl-tecnicos').DataTable()
+					.columns(5)
+					.search( 'A' )
+					.draw();
+			}			
+		});
+
+		$('#tbl-tecnicos').DataTable({
+			"dom": '<"top"if>rt<"bottom"lp><"clear">',
+
+			columnDefs: [
+				{ width: '12%', targets: 0 },
+				{ width: '12%', targets: 1 },
+				{ width: '12%', targets: 2 },
+				{ width: '12%', targets: 3 },
+				{ width: '12%', targets: 4 },
+				{ width: '12%', targets: 5 },
+				{ width: '12%', targets: 6 }
+			],
+
+			colReorder: true,
+			responsive: true,			
+			paging: true,
+			select: {
+				style: 'single'
+			},
+			'pageLength': 5,
+			 "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "todo"]],
+			'order': [[ 0, 'desc' ]],
+			stateSave: true,
+			'language': {
+				   url: 'https://cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json',
+				select: {
+					rows: "%d fila(s) seleccionada(s)"
+				}
+			},
+
+			"rowCallback": function( row, data, index ) {
+				if(index%2 == 0){
+					$(row).removeClass('myodd myeven');
+					$(row).addClass('myodd');
+					}
+				else{
+					$(row).removeClass('myodd myeven');
+					$(row).addClass('myeven');
+				}
+			}
+		});
+
+		$('#tbl-tecnicos').DataTable()
+			.columns(5)
+			.search( 'A' )
+			.draw();
+
+

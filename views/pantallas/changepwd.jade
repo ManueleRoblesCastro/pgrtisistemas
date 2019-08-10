@@ -1,0 +1,69 @@
+div(class=['ui','modal'] id='modalChangepwd')
+	i(class=['close', 'icon'])
+	div(class=['floated', 'seven', 'wide', 'column', 'form-Changepwd'])
+		button(class=['fluid', 'ui', 'button', 'disabled'])='Cambio de Clave'
+		br
+
+		form(class=['ui','form','segment'] id='form-detailChangepwd')
+			input(type='hidden' name='txtCodTecnico' id='id_txtCodTecnico' value = user.CodigoTecnico)
+			div(class=['ui','field'])
+				label(for='IdPwdActual')= 'Clave Actual'
+				input(type='password' name='IdPwdActual' id='id_IdPwdActual' size='15' maxlength='10')
+			div(class=['ui','field'])
+				label(for='IdPwdNuevo1')= 'Ingrese Nueva Clave (Al menos 7 caracteres)'
+				input(type='password' name='IdPwdNuevo1' id='id_IdPwdNuevo1' size='15' maxlength='10')
+			div(class=['ui','field'])
+				label(for='IdPwdNuevo2')= 'Confirme Nueva Clave'
+				input(type='password' name='IdPwdNuevo2' id='id_IdPwdNuevo2' size='15' maxlength='10')
+
+		div(class=['five center wide column'])
+			button(class=['ui blue button'] id='Changepwd-aceptar')='Aceptar'
+			button(class=['ui blue button'] id='Changepwd-cerrar')='Cerrar'
+
+script(type='text/javascript').
+
+	$('#Changepwd-aceptar').click(function (e){
+		
+		var tecclaveactual = $('#id_IdPwdActual').val();
+		var tecclavenueva = $('#id_IdPwdNuevo1').val();
+		var tecclavenueva1 = $('#id_IdPwdNuevo2').val();
+		//alert(tecclaveactual.length + ' ' + tecclavenueva.length + ' ' + tecclavenueva1.length);
+		
+		if(tecclaveactual.length == 0){
+			swal("Error!", "Por favor ingrese la clave actual.", "error");
+			return;
+		}
+		if(tecclavenueva.length < 7 || tecclavenueva1.length < 7 ){
+			swal("Error!", "Ingrese una clave nueva y confirmación de al menos 7 caracteres.", "error");
+			return;
+		}
+		if(tecclavenueva != tecclavenueva1 ){
+			swal("Error!", "Favor ambas claves nueva y confirmación deben ser iguales.", "error");
+			return;
+		}
+		
+		$.ajax({
+			url : '/pantallas/cambiarclave',
+			method : 'post',
+			data : {
+				txtCodTecnico: $('#id_txtCodTecnico').val(),
+				IdPwdActual: tecclaveactual,
+				IdPwdNuevo: tecclavenueva1
+			},
+			success : function(dataobtenida){
+				if(dataobtenida.res){
+					swal("Hecho!", "Su clave ha sido actualizada con exito.", "success");
+					$('.ui.modal').modal('hide');
+				}
+				else{
+					swal("Error!", "La clave actual no se puede encontrar.", "error");
+					return;
+				}
+			}
+		});
+	});
+
+	$('#Changepwd-cerrar').click(function (e){
+		//alert('aqui cerrar');
+		$('.ui.modal').modal('hide');
+	});
